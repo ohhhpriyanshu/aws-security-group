@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS Security Group Configuration - DA2-CYBER
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Default: vpc-088ce6e1f06213fd2
+    Description: Select the VPC ID
+  AllowedInboundIP:
+    Type: String
+    Default: 118.95.161.132/32
+    Description: IP address allowed for HTTP inbound access
+
+Resources:
+  DA2CYBERSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: DA2-CYBER
+      GroupDescription: IN & OUT BOUND INSPECTION
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref AllowedInboundIP
+          Description: HTTP Inbound Rule
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+          Description: All Traffic Outbound
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: DA2 HTTPS Outbound
+      Tags:
+        - Key: Name
+          Value: DA2-CYBER
+
+Outputs:
+  SecurityGroupId:
+    Description: Created Security Group ID
+    Value: !Ref DA2CYBERSecurityGroup
